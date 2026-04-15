@@ -19,7 +19,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +30,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const savedToken = localStorage.getItem('token');
     if (savedToken) {
       setToken(savedToken);
-      // Verify token and fetch user
       verifyToken(savedToken);
     } else {
       setIsLoading(false);
@@ -53,20 +52,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('Making login request to:', `${apiUrl}/auth/login`);
       const response = await axios.post(`${apiUrl}/auth/login`, {
         email,
         password,
       });
-      console.log('Login response:', response.data);
 
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       setToken(token);
       setUser(user);
     } catch (error: any) {
-      console.error('Login request failed:', error);
-      console.error('Error response:', error.response?.data);
       throw new Error(error.response?.data?.error || 'Login failed');
     }
   };
@@ -82,12 +77,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
-}
+};

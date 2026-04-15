@@ -8,7 +8,6 @@ import { NotificationService } from '../services/NotificationService';
 const router = Router();
 const prisma = new PrismaClient();
 
-// Create task
 router.post('/', managerOnly, async (req: AuthRequest, res) => {
   try {
     const { title, description, assigneeId, dueDate, priority } = req.body;
@@ -17,7 +16,6 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
       return res.status(400).json({ error: 'Title and assignee required' });
     }
 
-    // Verify assignee exists and is an employee
     const assignee = await prisma.user.findUnique({
       where: { id: assigneeId },
     });
@@ -35,10 +33,7 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
       priority || 'MEDIUM'
     );
 
-    // Include related data
     const taskDetail = await TaskService.getTaskDetail(task.id);
-
-    // Notify assignee
     await NotificationService.notifyTaskAssigned(taskDetail);
 
     res.status(201).json(taskDetail);
@@ -48,17 +43,12 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
   }
 });
 
-// Get tasks for current user
 router.get('/', async (req: AuthRequest, res) => {
   try {
     const { role } = req.user;
-    let tasks;
-
-    if (role === 'MANAGER') {
-      tasks = await TaskService.getTasksByCreator(req.userId!);
-    } else {
-      tasks = await TaskService.getTasksByAssignee(req.userId!);
-    }
+    const tasks = role === 'MANAGER'
+      ? await TaskService.getTasksByCreator(req.userId!)
+      : await TaskService.getTasksByAssignee(req.userId!);
 
     res.json(tasks);
   } catch (error: any) {
@@ -67,7 +57,6 @@ router.get('/', async (req: AuthRequest, res) => {
   }
 });
 
-// Get task details
 router.get('/:taskId', async (req: AuthRequest, res) => {
   try {
     const task = await TaskService.getTaskDetail(req.params.taskId);
@@ -76,11 +65,7 @@ router.get('/:taskId', async (req: AuthRequest, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    // Check access
-    if (
-      task.creatorId !== req.userId &&
-      task.assigneeId !== req.userId
-    ) {
+    if (task.creatorId !== req.userId && task.assigneeId !== req.userId) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -91,7 +76,6 @@ router.get('/:taskId', async (req: AuthRequest, res) => {
   }
 });
 
-// Update task status
 router.patch('/:taskId/status', async (req: AuthRequest, res) => {
   try {
     const { status, returnReason } = req.body;
@@ -101,11 +85,7 @@ router.patch('/:taskId/status', async (req: AuthRequest, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    // Check access
-    if (
-      task.creatorId !== req.userId &&
-      task.assigneeId !== req.userId
-    ) {
+    if (task.creatorId !== req.userId && task.assigneeId !== req.userId) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -117,7 +97,6 @@ router.patch('/:taskId/status', async (req: AuthRequest, res) => {
       returnReason
     );
 
-    // Send notifications
     if (status === 'IN_PROGRESS') {
       await NotificationService.notifyTaskStarted(updatedTask);
     } else if (status === 'COMPLETED') {
@@ -136,7 +115,6 @@ router.patch('/:taskId/status', async (req: AuthRequest, res) => {
   }
 });
 
-// Start/Pause timer
 router.post('/:taskId/timer/start', async (req: AuthRequest, res) => {
   try {
     const task = await TaskService.getTaskDetail(req.params.taskId);
@@ -149,12 +127,10 @@ router.post('/:taskId/timer/start', async (req: AuthRequest, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Check if task is in progress
     if (task.status !== 'IN_PROGRESS') {
       return res.status(400).json({ error: 'Task must be in progress to start timer' });
     }
 
-    // Check if timer already running
     const activeTimer = await TimeLogService.getActiveTimer(req.params.taskId);
     if (activeTimer) {
       return res.status(400).json({ error: 'Timer already running' });
@@ -192,7 +168,6 @@ router.post('/:taskId/timer/pause', async (req: AuthRequest, res) => {
   }
 });
 
-// Get task time logs
 router.get('/:taskId/timeLogs', async (req: AuthRequest, res) => {
   try {
     const task = await TaskService.getTaskDetail(req.params.taskId);
@@ -219,7 +194,6 @@ router.get('/:taskId/timeLogs', async (req: AuthRequest, res) => {
   }
 });
 
-// Get manager's team tasks
 router.get('/manager/team-tasks', managerOnly, async (req: AuthRequest, res) => {
   try {
     const tasks = await TaskService.getTasksForTeam(req.userId!);
@@ -230,7 +204,6 @@ router.get('/manager/team-tasks', managerOnly, async (req: AuthRequest, res) => 
   }
 });
 
-// Get manager's dashboard stats
 router.get('/manager/stats', managerOnly, async (req: AuthRequest, res) => {
   try {
     const stats = await TaskService.getTaskStats(req.userId!);

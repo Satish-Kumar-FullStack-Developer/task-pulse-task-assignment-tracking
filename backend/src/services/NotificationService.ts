@@ -14,7 +14,6 @@ export interface NotificationEvent {
 
 export class NotificationService {
   static async createNotification(event: NotificationEvent) {
-    // Create in-app notification
     const notification = await prisma.notification.create({
       data: {
         type: event.type,
@@ -22,12 +21,9 @@ export class NotificationService {
         message: event.message,
         taskId: event.taskId,
       },
-      include: {
-        recipient: true,
-      },
+      include: { recipient: true },
     });
 
-    // Emit via WebSocket if available
     if (global.io) {
       global.io.to(event.recipientId).emit('notification:created', {
         id: notification.id,
@@ -38,7 +34,6 @@ export class NotificationService {
       });
     }
 
-    // Send WhatsApp if phone provided and event type supports it
     if (event.phone && this.shouldSendWhatsApp(event.type)) {
       await this.sendWhatsAppNotification(event, notification.id);
     }
@@ -46,14 +41,14 @@ export class NotificationService {
     return notification;
   }
 
-  private static shouldSendWhatsApp(type: NotificationType): boolean {
+  private static shouldSendWhatsApp = (type: NotificationType): boolean => {
     return ['TASK_ASSIGNED', 'TASK_COMPLETED'].includes(type);
-  }
+  };
 
-  private static async sendWhatsAppNotification(
+  private static sendWhatsAppNotification = async (
     event: NotificationEvent,
     notificationId: string
-  ) {
+  ) => {
     try {
       const recipient = await prisma.user.findUnique({
         where: { id: event.recipientId },
@@ -73,7 +68,6 @@ export class NotificationService {
         parameters,
       });
 
-      // Log delivery
       await prisma.deliveryLog.create({
         data: {
           notificationId,
@@ -85,14 +79,10 @@ export class NotificationService {
         },
       });
 
-      console.log(
-        `WhatsApp notification sent to ${recipient.phone}:`,
-        result
-      );
+      console.log(`WhatsApp notification sent to ${recipient.phone}:`, result);
     } catch (error: any) {
       console.error('Failed to send WhatsApp notification:', error);
 
-      // Log failure
       await prisma.deliveryLog.create({
         data: {
           notificationId,
@@ -103,9 +93,9 @@ export class NotificationService {
         },
       });
     }
-  }
+  };
 
-  private static getTemplateNameForEvent(type: NotificationType): string {
+  private static getTemplateNameForEvent = (type: NotificationType): string => {
     const templates: Record<NotificationType, string> = {
       TASK_ASSIGNED: process.env.MSG91_TEMPLATE_TASK_ASSIGNED || 'task_assigned',
       TASK_COMPLETED: process.env.MSG91_TEMPLATE_TASK_COMPLETED || 'task_completed',
@@ -116,16 +106,14 @@ export class NotificationService {
     };
 
     return templates[type];
-  }
+  };
 
-  private static extractTemplateParameters(event: NotificationEvent): string[] {
-    // This will be specific to your templates
-    // For now, return a generic parameter list
-    return event.message.split('|').slice(1); // Remove type prefix
-  }
+  private static extractTemplateParameters = (event: NotificationEvent): string[] => {
+    return event.message.split('|').slice(1);
+  };
 
   static async markAsRead(notificationId: string) {
-    return prisma.notification.update({
+    return await prisma.notification.update({
       where: { id: notificationId },
       data: {
         read: true,
@@ -135,20 +123,16 @@ export class NotificationService {
   }
 
   static async getUserNotifications(userId: string, limit: number = 20) {
-    return prisma.notification.findMany({
+    return await prisma.notification.findMany({
       where: { recipientId: userId },
       take: limit,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        task: true,
-      },
+      orderBy: { createdAt: 'desc' },
+      include: { task: true },
     });
   }
 
   static async getUnreadCount(userId: string) {
-    return prisma.notification.count({
+    return await prisma.notification.count({
       where: {
         recipientId: userId,
         read: false,
@@ -157,7 +141,7 @@ export class NotificationService {
   }
 
   static async markAllAsRead(userId: string) {
-    return prisma.notification.updateMany({
+    return await prisma.notification.updateMany({
       where: {
         recipientId: userId,
         read: false,
@@ -169,10 +153,8 @@ export class NotificationService {
     });
   }
 
-  // Event emitters
   static async notifyTaskAssigned(task: any) {
     const recipient = task.assignee;
-    
     const message = `You have been assigned task: "${task.title}"${
       task.dueDate ? ` due on ${new Date(task.dueDate).toLocaleDateString()}` : ''
     }`;
@@ -188,7 +170,6 @@ export class NotificationService {
 
   static async notifyTaskStarted(task: any) {
     const recipient = task.creator;
-
     const message = `${task.assignee.name} has started task: "${task.title}"`;
 
     await this.createNotification({
@@ -204,7 +185,6 @@ export class NotificationService {
     const recipient = task.creator;
     const hours = Math.floor(totalTime / 3600);
     const minutes = Math.floor((totalTime % 3600) / 60);
-
     const message = `${task.assignee.name} has completed task: "${task.title}" (${hours}h ${minutes}m)`;
 
     await this.createNotification({
@@ -219,7 +199,6 @@ export class NotificationService {
   static async notifyCommentAdded(comment: any, task: any) {
     const isAddedByManager = comment.author.role === 'MANAGER';
     const recipientId = isAddedByManager ? task.assigneeId : task.creatorId;
-
     const message = `New comment on "${task.title}": ${comment.content.substring(0, 50)}...`;
 
     await this.createNotification({

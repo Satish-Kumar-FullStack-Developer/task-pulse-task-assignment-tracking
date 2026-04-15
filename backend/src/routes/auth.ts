@@ -22,7 +22,6 @@ interface AuthResponse {
   };
 }
 
-// Login
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body as LoginRequest;
@@ -73,7 +72,6 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-// Refresh token
 router.post('/refresh', (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body;
