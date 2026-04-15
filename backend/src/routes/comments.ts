@@ -68,8 +68,9 @@ router.post('/', async (req: AuthRequest, res) => {
     }
 
     res.status(201).json(comment);
-  } catch (error: any) {
-    
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get task comments

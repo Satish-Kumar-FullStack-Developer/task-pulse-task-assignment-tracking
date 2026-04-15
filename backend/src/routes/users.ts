@@ -25,8 +25,9 @@ router.get('/me', async (req: AuthRequest, res) => {
     }
 
     res.json(user);
-  } catch (error: any) {
-    
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get employees (for manager's assignment dropdown)
@@ -51,8 +52,8 @@ router.get('/employees', async (req: AuthRequest, res) => {
     });
 
     res.json(employees);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 
 export default router;

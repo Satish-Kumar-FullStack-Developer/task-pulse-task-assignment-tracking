@@ -2,49 +2,33 @@ import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 
-export function useWebSocket() {
+export const useWebSocket = () => {
   const { token } = useAuth();
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     if (!token) return;
 
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
-    const newSocket = io(wsUrl, {
+    const ws = io(import.meta.env.VITE_WS_URL || 'ws://localhost:3001', {
       auth: { token },
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5,
     });
 
-    newSocket.on('connect', () => {
-      console.log('WebSocket connected');
-      newSocket.emit('user:join', token);
+    ws.on('connect', () => {
+      ws.emit('user:join', token);
       setConnected(true);
     });
 
-    newSocket.on('disconnect', () => {
-      console.log('WebSocket disconnected');
-      setConnected(false);
-    });
+    ws.on('disconnect', () => setConnected(false));
+    setSocket(ws);
 
-    newSocket.on('error', (error) => {
-      console.error('WebSocket error:', error);
-    });
-
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.disconnect();
-    };
+    return () => ws.disconnect();
   }, [token]);
 
   return { socket, connected };
-}
+};
 
-export function useTaskUpdates(taskId: string) {
+export const useTaskUpdates = (taskId: string) => {
   const { socket } = useWebSocket();
   const [updates, setUpdates] = useState<any>(null);
 

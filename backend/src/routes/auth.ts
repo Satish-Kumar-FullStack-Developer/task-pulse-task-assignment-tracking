@@ -5,22 +5,7 @@ import { prisma } from '../db';
 
 const router = Router();
 
-interface LoginRequest {
-  email: string;
-  password: string;
-}
 
-interface AuthResponse {
-  token: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role: string;
-    managerId?: string;
-  };
-}
 
 router.post('/login', async (req: Request, res: Response) => {
   try {
@@ -58,14 +43,8 @@ router.post('/login', async (req: Request, res: Response) => {
     res.json({
       token,
       refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        managerId: user.managerId,
-      },
-    } as AuthResponse);
+      user,
+    });
   } catch (error) {
     
 });

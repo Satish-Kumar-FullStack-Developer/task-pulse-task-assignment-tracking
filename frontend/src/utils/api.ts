@@ -19,47 +19,37 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'APPROVED' | 'RETURNED';
-  priority: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  status: string;
+  priority: string;
   creatorId: string;
   assigneeId: string;
-  creator: { id: string; name: string; email: string };
-  assignee: { id: string; name: string; email: string };
+  creator: any;
+  assignee: any;
   dueDate?: string;
   startedAt?: string;
   completedAt?: string;
-  approvedAt?: string;
   createdAt: string;
-  updatedAt: string;
-  timeLogs: TimeLog[];
-  comments: Comment[];
+  timeLogs: any[];
+  comments: any[];
 }
 
 export interface TimeLog {
   id: string;
-  taskId: string;
-  userId: string;
   startTime: string;
   endTime?: string;
   duration?: number;
-  createdAt: string;
 }
 
 export interface Comment {
   id: string;
-  taskId: string;
-  authorId: string;
-  author: { id: string; name: string; role: 'MANAGER' | 'EMPLOYEE' };
   content: string;
-  isSystem: boolean;
+  author: any;
   createdAt: string;
 }
 
 export interface Notification {
   id: string;
-  type: 'TASK_ASSIGNED' | 'TASK_STARTED' | 'TASK_COMPLETED' | 'TASK_RETURNED' | 'COMMENT_ADDED';
   message: string;
-  taskId?: string;
   read: boolean;
   createdAt: string;
 }
