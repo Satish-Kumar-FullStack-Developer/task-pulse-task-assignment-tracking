@@ -4,6 +4,7 @@ import { AuthRequest, managerOnly } from '../middleware/auth';
 import { TaskService } from '../services/TaskService';
 import { TimeLogService } from '../services/TimeLogService';
 import { NotificationService } from '../services/NotificationService';
+import { USER_ROLES, TASK_STATUS, TASK_PRIORITY } from '../constants';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -20,7 +21,7 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
       where: { id: assigneeId },
     });
 
-    if (!assignee || assignee.role !== 'EMPLOYEE') {
+    if (!assignee || assignee.role !== USER_ROLES.EMPLOYEE) {
       return res.status(400).json({ error: 'Assignee must be an employee' });
     }
 
@@ -30,7 +31,7 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
       assigneeId,
       req.userId!,
       dueDate,
-      priority || 'MEDIUM'
+      priority || TASK_PRIORITY.MEDIUM
     );
 
     const taskDetail = await TaskService.getTaskDetail(task.id);
@@ -45,7 +46,7 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
 router.get('/', async (req: AuthRequest, res) => {
   try {
     const { role } = req.user;
-    const tasks = role === 'MANAGER'
+    const tasks = role === USER_ROLES.MANAGER
       ? await TaskService.getTasksByCreator(req.userId!)
       : await TaskService.getTasksByAssignee(req.userId!);
 
@@ -94,14 +95,14 @@ router.patch('/:taskId/status', async (req: AuthRequest, res) => {
       returnReason
     );
 
-    if (status === 'IN_PROGRESS') {
+    if (status === TASK_STATUS.IN_PROGRESS) {
       await NotificationService.notifyTaskStarted(updatedTask);
-    } else if (status === 'COMPLETED') {
+    } else if (status === TASK_STATUS.COMPLETED) {
       const totalTime = await TimeLogService.getTotalTaskTime(req.params.taskId);
       await NotificationService.notifyTaskCompleted(updatedTask, totalTime);
-    } else if (status === 'RETURNED') {
+    } else if (status === TASK_STATUS.RETURNED) {
       await NotificationService.notifyTaskReturned(updatedTask, returnReason);
-    } else if (status === 'APPROVED') {
+    } else if (status === TASK_STATUS.APPROVED) {
       await NotificationService.notifyTaskApproved(updatedTask);
     }
 
@@ -123,7 +124,7 @@ router.post('/:taskId/timer/start', async (req: AuthRequest, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    if (task.status !== 'IN_PROGRESS') {
+    if (task.status !== TASK_STATUS.IN_PROGRESS) {
       return res.status(400).json({ error: 'Task must be in progress to start timer' });
     }
 

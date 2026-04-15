@@ -1,5 +1,6 @@
 import { PrismaClient, NotificationType, NotificationChannel } from '@prisma/client';
 import { WhatsAppService } from './WhatsAppService';
+import { NOTIFICATION_TYPE, NOTIFICATION_CHANNEL, DELIVERY_STATUS, WHATSAPP, USER_ROLES } from '../constants';
 
 const prisma = new PrismaClient();
 
@@ -42,7 +43,7 @@ export class NotificationService {
   }
 
   private static shouldSendWhatsApp = (type: NotificationType): boolean => {
-    return ['TASK_ASSIGNED', 'TASK_COMPLETED'].includes(type);
+    return [NOTIFICATION_TYPE.TASK_ASSIGNED, NOTIFICATION_TYPE.TASK_COMPLETED].includes(type);
   };
 
   private static sendWhatsAppNotification = async (
@@ -70,9 +71,9 @@ export class NotificationService {
       await prisma.deliveryLog.create({
         data: {
           notificationId,
-          channel: 'WHATSAPP',
-          provider: process.env.WHATSAPP_PROVIDER || 'msg91',
-          status: result.success ? 'SENT' : 'FAILED',
+          channel: NOTIFICATION_CHANNEL.WHATSAPP,
+          provider: WHATSAPP.PROVIDER,
+          status: result.success ? DELIVERY_STATUS.SENT : DELIVERY_STATUS.FAILED,
           externalId: result.externalId,
           errorMessage: result.error,
         },
@@ -81,9 +82,9 @@ export class NotificationService {
       await prisma.deliveryLog.create({
         data: {
           notificationId,
-          channel: 'WHATSAPP',
-          provider: process.env.WHATSAPP_PROVIDER || 'msg91',
-          status: 'FAILED',
+          channel: NOTIFICATION_CHANNEL.WHATSAPP,
+          provider: WHATSAPP.PROVIDER,
+          status: DELIVERY_STATUS.FAILED,
           errorMessage: error.message,
         },
       });
@@ -155,7 +156,7 @@ export class NotificationService {
     }`;
 
     await this.createNotification({
-      type: 'TASK_ASSIGNED',
+      type: NOTIFICATION_TYPE.TASK_ASSIGNED,
       recipientId: task.assigneeId,
       message,
       taskId: task.id,
@@ -168,7 +169,7 @@ export class NotificationService {
     const message = `${task.assignee.name} has started task: "${task.title}"`;
 
     await this.createNotification({
-      type: 'TASK_STARTED',
+      type: NOTIFICATION_TYPE.TASK_STARTED,
       recipientId: task.creatorId,
       message,
       taskId: task.id,
@@ -183,7 +184,7 @@ export class NotificationService {
     const message = `${task.assignee.name} has completed task: "${task.title}" (${hours}h ${minutes}m)`;
 
     await this.createNotification({
-      type: 'TASK_COMPLETED',
+      type: NOTIFICATION_TYPE.TASK_COMPLETED,
       recipientId: task.creatorId,
       message,
       taskId: task.id,
@@ -192,12 +193,12 @@ export class NotificationService {
   }
 
   static async notifyCommentAdded(comment: any, task: any) {
-    const isAddedByManager = comment.author.role === 'MANAGER';
+    const isAddedByManager = comment.author.role === USER_ROLES.MANAGER;
     const recipientId = isAddedByManager ? task.assigneeId : task.creatorId;
     const message = `New comment on "${task.title}": ${comment.content.substring(0, 50)}...`;
 
     await this.createNotification({
-      type: 'COMMENT_ADDED',
+      type: NOTIFICATION_TYPE.COMMENT_ADDED,
       recipientId,
       message,
       taskId: task.id,
@@ -208,7 +209,7 @@ export class NotificationService {
     const message = `Task "${task.title}" has been returned: ${reason.substring(0, 50)}...`;
 
     await this.createNotification({
-      type: 'TASK_RETURNED',
+      type: NOTIFICATION_TYPE.TASK_RETURNED,
       recipientId: task.assigneeId,
       message,
       taskId: task.id,
@@ -219,7 +220,7 @@ export class NotificationService {
     const message = `Task "${task.title}" has been approved!`;
 
     await this.createNotification({
-      type: 'TASK_APPROVED',
+      type: NOTIFICATION_TYPE.TASK_APPROVED,
       recipientId: task.assigneeId,
       message,
       taskId: task.id,

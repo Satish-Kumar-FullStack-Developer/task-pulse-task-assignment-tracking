@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios';\nimport { WHATSAPP } from '../constants';
 
 export interface WhatsAppMessage {
   phone: string;
@@ -8,7 +8,7 @@ export interface WhatsAppMessage {
 }
 
 export class WhatsAppService {
-  private static provider = process.env.WHATSAPP_PROVIDER || 'msg91';
+  private static provider = WHATSAPP.PROVIDER;
 
   static async sendMessage(message: WhatsAppMessage): Promise<{
     success: boolean;
@@ -32,8 +32,8 @@ export class WhatsAppService {
   }
 
   private static async sendMsg91(message: WhatsAppMessage) {
-    const authKey = process.env.MSG91_AUTH_KEY;
-    const route = process.env.MSG91_ROUTE || '1';
+    const authKey = WHATSAPP.MSG91_AUTH_KEY;
+    const route = WHATSAPP.MSG91_ROUTE;
 
     if (!authKey) {
       return { success: false, error: 'MSG91_AUTH_KEY not configured' };
@@ -73,8 +73,8 @@ export class WhatsAppService {
   }
 
   private static async sendGupshup(message: WhatsAppMessage) {
-    const apiKey = process.env.GUPSHUP_API_KEY;
-    const appName = process.env.GUPSHUP_APP_NAME;
+    const apiKey = WHATSAPP.GUPSHUP_API_KEY;
+    const appName = WHATSAPP.GUPSHUP_APP_NAME;
 
     if (!apiKey || !appName) {
       return { success: false, error: 'Gupshup credentials not configured' };

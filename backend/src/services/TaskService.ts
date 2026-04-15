@@ -1,5 +1,6 @@
 import { PrismaClient, TaskStatus, TaskPriority } from '@prisma/client';
 import { ActivityLogService } from './ActivityLogService';
+import { TASK_STATUS, TASK_PRIORITY, USER_ROLES } from '../constants';
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ export class TaskService {
     assigneeId: string,
     creatorId: string,
     dueDate: string | undefined,
-    priority: TaskPriority = 'MEDIUM'
+    priority: TaskPriority = TASK_PRIORITY.MEDIUM
   ) {
     const task = await prisma.task.create({
       data: {
@@ -20,7 +21,7 @@ export class TaskService {
         creatorId,
         dueDate: dueDate ? new Date(dueDate) : null,
         priority,
-        status: 'PENDING',
+        status: TASK_STATUS.PENDING,
       },
       include: {
         creator: true,
@@ -85,18 +86,18 @@ export class TaskService {
 
   static validateTransition = (currentStatus: TaskStatus, nextStatus: TaskStatus, userRole: string) => {
     const validTransitions: Record<TaskStatus, TaskStatus[]> = {
-      PENDING: ['IN_PROGRESS'],
-      IN_PROGRESS: ['COMPLETED', 'PENDING'],
-      COMPLETED: ['APPROVED', 'RETURNED'],
+      PENDING: [TASK_STATUS.IN_PROGRESS as TaskStatus],
+      IN_PROGRESS: [TASK_STATUS.COMPLETED as TaskStatus, TASK_STATUS.PENDING as TaskStatus],
+      COMPLETED: [TASK_STATUS.APPROVED as TaskStatus, TASK_STATUS.RETURNED as TaskStatus],
       APPROVED: [],
-      RETURNED: ['IN_PROGRESS'],
+      RETURNED: [TASK_STATUS.IN_PROGRESS as TaskStatus],
     };
 
     if (!validTransitions[currentStatus]?.includes(nextStatus)) {
       throw new Error(`Cannot transition from ${currentStatus} to ${nextStatus}`);
     }
 
-    if ((nextStatus === 'APPROVED' || nextStatus === 'RETURNED') && userRole !== 'MANAGER') {
+    if ((nextStatus === TASK_STATUS.APPROVED || nextStatus === TASK_STATUS.RETURNED) && userRole !== USER_ROLES.MANAGER) {
       throw new Error('Only managers can approve or return tasks');
     }
   };
@@ -119,25 +120,25 @@ export class TaskService {
 
     this.validateTransition(task.status, nextStatus, userRole);
 
-    if (nextStatus === 'IN_PROGRESS' && task.assigneeId !== userId) {
+    if (nextStatus === TASK_STATUS.IN_PROGRESS && task.assigneeId !== userId) {
       throw new Error('Only the assigned employee can start this task');
     }
 
-    if ((nextStatus === 'APPROVED' || nextStatus === 'RETURNED') && task.creatorId !== userId) {
+    if ((nextStatus === TASK_STATUS.APPROVED || nextStatus === TASK_STATUS.RETURNED) && task.creatorId !== userId) {
       throw new Error('Only the task creator can approve or return tasks');
     }
 
     const updateData: any = { status: nextStatus };
 
-    if (nextStatus === 'IN_PROGRESS' && !task.startedAt) {
+    if (nextStatus === TASK_STATUS.IN_PROGRESS && !task.startedAt) {
       updateData.startedAt = new Date();
     }
 
-    if (nextStatus === 'COMPLETED') {
+    if (nextStatus === TASK_STATUS.COMPLETED) {
       updateData.completedAt = new Date();
     }
 
-    if (nextStatus === 'APPROVED') {
+    if (nextStatus === TASK_STATUS.APPROVED) {
       updateData.approvedAt = new Date();
     }
 
@@ -157,7 +158,7 @@ export class TaskService {
       to: nextStatus,
     });
 
-    if (nextStatus === 'RETURNED' && returnReason) {
+    if (nextStatus === TASK_STATUS.RETURNED && returnReason) {
       await prisma.comment.create({
         data: {
           taskId,
@@ -191,11 +192,11 @@ export class TaskService {
 
     return {
       total: tasks.length,
-      pending: tasks.filter((t) => t.status === 'PENDING').length,
-      inProgress: tasks.filter((t) => t.status === 'IN_PROGRESS').length,
-      completed: tasks.filter((t) => t.status === 'COMPLETED').length,
-      approved: tasks.filter((t) => t.status === 'APPROVED').length,
-      returned: tasks.filter((t) => t.status === 'RETURNED').length,
+      pending: tasks.filter((t) => t.status === TASK_STATUS.PENDING).length,
+      inProgress: tasks.filter((t) => t.status === TASK_STATUS.IN_PROGRESS).length,
+      completed: tasks.filter((t) => t.status === TASK_STATUS.COMPLETED).length,
+      approved: tasks.filter((t) => t.status === TASK_STATUS.APPROVED).length,
+      returned: tasks.filter((t) => t.status === TASK_STATUS.RETURNED).length,
     };
   };
 }
