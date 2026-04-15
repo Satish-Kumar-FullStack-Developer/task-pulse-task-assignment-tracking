@@ -69,9 +69,7 @@ router.post('/', async (req: AuthRequest, res) => {
 
     res.status(201).json(comment);
   } catch (error: any) {
-    console.error('Create comment error:', error);
-    res.status(500).json({ error: error.message });
-  }
+    
 });
 
 // Get task comments
@@ -109,9 +107,7 @@ router.get('/:taskId', async (req: AuthRequest, res) => {
 
     res.json(comments);
   } catch (error: any) {
-    console.error('Get comments error:', error);
     res.status(500).json({ error: error.message });
   }
-});
 
 export default router;

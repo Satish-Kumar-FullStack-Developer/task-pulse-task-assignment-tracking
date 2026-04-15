@@ -55,7 +55,6 @@ export class NotificationService {
       });
 
       if (!recipient?.phone) {
-        console.warn(`User ${event.recipientId} has no phone number configured`);
         return;
       }
 
@@ -78,11 +77,7 @@ export class NotificationService {
           errorMessage: result.error,
         },
       });
-
-      console.log(`WhatsApp notification sent to ${recipient.phone}:`, result);
     } catch (error: any) {
-      console.error('Failed to send WhatsApp notification:', error);
-
       await prisma.deliveryLog.create({
         data: {
           notificationId,

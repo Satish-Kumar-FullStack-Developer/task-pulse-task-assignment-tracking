@@ -24,7 +24,6 @@ export class WhatsAppService {
 
       return { success: false, error: 'Unknown WhatsApp provider' };
     } catch (error: any) {
-      console.error('WhatsApp send error:', error.message);
       return {
         success: false,
         error: error.message,
@@ -37,11 +36,9 @@ export class WhatsAppService {
     const route = process.env.MSG91_ROUTE || '1';
 
     if (!authKey) {
-      console.warn('MSG91_AUTH_KEY not configured');
       return { success: false, error: 'MSG91_AUTH_KEY not configured' };
     }
 
-    // Format phone number: remove +, 0x prefix if any
     const formattedPhone = message.phone.replace(/\D/g, '').slice(-10);
 
     try {
@@ -51,7 +48,7 @@ export class WhatsAppService {
           template_id: message.templateName,
           recipients: [
             {
-              mobiles: `91${formattedPhone}`, // Assume India +91
+              mobiles: `91${formattedPhone}`,
               name: 'User',
             },
           ],
@@ -65,15 +62,12 @@ export class WhatsAppService {
         }
       );
 
-      console.log('Msg91 response:', response.data);
-
       const messageId = response.data?.message?.[0]?.messageid;
       return {
         success: response.data?.type === 'success',
         externalId: messageId,
       };
     } catch (error: any) {
-      console.error('Msg91 error:', error.response?.data || error.message);
       throw error;
     }
   }
@@ -83,7 +77,6 @@ export class WhatsAppService {
     const appName = process.env.GUPSHUP_APP_NAME;
 
     if (!apiKey || !appName) {
-      console.warn('Gupshup credentials not configured');
       return { success: false, error: 'Gupshup credentials not configured' };
     }
 
@@ -94,7 +87,7 @@ export class WhatsAppService {
         'https://api.gupshup.io/wa/api/v1/msg',
         {
           channel: 'whatsapp',
-          source: '919999999999', // Placeholder sandbox number
+          source: '919999999999',
           destination: `91${formattedPhone}`,
           'message-type': 'template',
           'template-id': message.templateName,
@@ -109,21 +102,16 @@ export class WhatsAppService {
         }
       );
 
-      console.log('Gupshup response:', response.data);
-
       return {
         success: response.data?.status === 'submitted',
         externalId: response.data?.messageId,
       };
     } catch (error: any) {
-      console.error('Gupshup error:', error.response?.data || error.message);
       throw error;
     }
   }
 
   static async simulateDelivery(externalId: string) {
-    // For sandbox testing, simulate delivery
-    console.log(`[SIMULATED] WhatsApp message ${externalId} delivered`);
     return { success: true };
   }
 }

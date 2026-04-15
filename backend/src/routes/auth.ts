@@ -67,9 +67,7 @@ router.post('/login', async (req: Request, res: Response) => {
       },
     } as AuthResponse);
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+    
 });
 
 router.post('/refresh', (req: Request, res: Response) => {
@@ -93,9 +91,7 @@ router.post('/refresh', (req: Request, res: Response) => {
 
     res.json({ token: newToken });
   } catch (error) {
-    console.error('Refresh token error:', error);
     return res.status(401).json({ error: 'Invalid refresh token' });
   }
-});
 
 export default router;

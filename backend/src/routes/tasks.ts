@@ -38,7 +38,6 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
 
     res.status(201).json(taskDetail);
   } catch (error: any) {
-    console.error('Create task error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -52,7 +51,6 @@ router.get('/', async (req: AuthRequest, res) => {
 
     res.json(tasks);
   } catch (error: any) {
-    console.error('Get tasks error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -71,7 +69,6 @@ router.get('/:taskId', async (req: AuthRequest, res) => {
 
     res.json(task);
   } catch (error: any) {
-    console.error('Get task error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -110,7 +107,6 @@ router.patch('/:taskId/status', async (req: AuthRequest, res) => {
 
     res.json(updatedTask);
   } catch (error: any) {
-    console.error('Update task status error:', error);
     res.status(400).json({ error: error.message });
   }
 });
@@ -139,7 +135,6 @@ router.post('/:taskId/timer/start', async (req: AuthRequest, res) => {
     const timeLog = await TimeLogService.startTimer(req.params.taskId, req.userId!);
     res.json(timeLog);
   } catch (error: any) {
-    console.error('Start timer error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -163,7 +158,6 @@ router.post('/:taskId/timer/pause', async (req: AuthRequest, res) => {
     const pausedLog = await TimeLogService.pauseTimer(timeLogId);
     res.json(pausedLog);
   } catch (error: any) {
-    console.error('Pause timer error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -189,7 +183,6 @@ router.get('/:taskId/timeLogs', async (req: AuthRequest, res) => {
       elapsedTime: await TimeLogService.getTaskElapsedTime(req.params.taskId),
     });
   } catch (error: any) {
-    console.error('Get time logs error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -199,7 +192,6 @@ router.get('/manager/team-tasks', managerOnly, async (req: AuthRequest, res) => 
     const tasks = await TaskService.getTasksForTeam(req.userId!);
     res.json(tasks);
   } catch (error: any) {
-    console.error('Get team tasks error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -209,7 +201,6 @@ router.get('/manager/stats', managerOnly, async (req: AuthRequest, res) => {
     const stats = await TaskService.getTaskStats(req.userId!);
     res.json(stats);
   } catch (error: any) {
-    console.error('Get stats error:', error);
     res.status(500).json({ error: error.message });
   }
 });
