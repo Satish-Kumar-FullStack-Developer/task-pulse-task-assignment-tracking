@@ -8,7 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import Header from './components/Header';
 import './index.css';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -22,7 +22,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function App() {
+const App = () => {
   return (
     <AuthProvider>
       <BrowserRouter>

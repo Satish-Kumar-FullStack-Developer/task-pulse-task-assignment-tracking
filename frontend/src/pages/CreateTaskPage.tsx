@@ -5,7 +5,7 @@ import { createTask, getEmployees } from '../utils/api';
 import { Alert, Button, Input, Select, Textarea } from '../components/Form';
 import { ChevronLeft } from 'lucide-react';
 
-export default function CreateTaskPage() {
+export default const CreateTaskPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 

@@ -7,7 +7,7 @@ import { formatDate, getStatusColor, getPriorityColor, isOverdue } from '../util
 import { Alert, Badge, Button } from '../components/Form';
 import { AlertCircle } from 'lucide-react';
 
-export default function TaskListPage() {
+export default const TaskListPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);

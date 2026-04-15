@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import NotificationBell from './NotificationBell';
 import { LogOut, Plus, LayoutDashboard, ListTodo } from 'lucide-react';
 
-export default function Header() {
+export default const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 

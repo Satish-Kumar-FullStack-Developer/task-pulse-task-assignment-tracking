@@ -8,7 +8,7 @@ import { Alert, Button, Textarea } from '../components/Form';
 import { ChevronLeft, Clock, MessageCircle } from 'lucide-react';
 import { useTaskUpdates } from '../hooks/useWebSocket';
 
-export default function TaskDetailPage() {
+export default const TaskDetailPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();

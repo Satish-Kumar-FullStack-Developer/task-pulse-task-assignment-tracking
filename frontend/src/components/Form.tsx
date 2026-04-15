@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export function Alert({ type = 'info', children, className = '' }: { type?: 'info' | 'success' | 'error' | 'warning'; children: ReactNode; className?: string }) {
+export const Alert = ({ type = 'info', children, className = '' }: { type?: 'info' | 'success' | 'error' | 'warning'; children: ReactNode; className?: string }) => {
   const colors = {
     info: 'bg-blue-50 border-blue-200 text-blue-800',
     success: 'bg-green-50 border-green-200 text-green-800',
@@ -15,7 +15,7 @@ export function Alert({ type = 'info', children, className = '' }: { type?: 'inf
   );
 }
 
-export function Badge({ color = 'gray', children }: { color?: string; children: ReactNode }) {
+export const Badge = ({ color = 'gray', children }: { color?: string; children: ReactNode }) => {
   const colors: Record<string, string> = {
     blue: 'bg-blue-100 text-blue-800',
     green: 'bg-green-100 text-green-800',
@@ -27,7 +27,7 @@ export function Badge({ color = 'gray', children }: { color?: string; children: 
   return <span className={`inline-block px-2.5 py-0.5 rounded-full text-sm font-medium ${colors[color] || colors.gray}`}>{children}</span>;
 }
 
-export function Button({
+export const Button = ({
   children,
   variant = 'primary',
   size = 'md',
@@ -37,7 +37,7 @@ export function Button({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'secondary' | 'danger';
   size?: 'sm' | 'md' | 'lg';
-}) {
+}) => {
   const variants = {
     primary: 'bg-primary-600 text-white hover:bg-primary-700 disabled:bg-gray-400',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-300',
@@ -62,10 +62,10 @@ export function Button({
   );
 }
 
-export function Input({
+export const Input = ({
   label,
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & { label?: string }) {
+}: React.InputHTMLAttributes<HTMLInputElement> & { label?: string }) => {
   return (
     <div className="mb-4">
       {label && <label className="block text-sm font-medium mb-1">{label}</label>}
@@ -74,14 +74,14 @@ export function Input({
   );
 }
 
-export function Select({
+export const Select = ({
   label,
   options,
   ...props
 }: React.SelectHTMLAttributes<HTMLSelectElement> & {
   label?: string;
   options: Array<{ value: string; label: string }>;
-}) {
+}) => {
   return (
     <div className="mb-4">
       {label && <label className="block text-sm font-medium mb-1">{label}</label>}
@@ -96,10 +96,10 @@ export function Select({
   );
 }
 
-export function Textarea({
+export const Textarea = ({
   label,
   ...props
-}: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label?: string }) {
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label?: string }) => {
   return (
     <div className="mb-4">
       {label && <label className="block text-sm font-medium mb-1">{label}</label>}

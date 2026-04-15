@@ -4,7 +4,7 @@ import { api } from '../utils/api';
 import { Alert } from '../components/Form';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-export default function DashboardPage() {
+export default const DashboardPage = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
