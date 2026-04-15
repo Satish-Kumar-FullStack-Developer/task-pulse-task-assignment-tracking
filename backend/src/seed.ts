@@ -4,9 +4,6 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding database...');
-
-  // Clear existing data
   await prisma.deliveryLog.deleteMany();
   await prisma.activityLog.deleteMany();
   await prisma.comment.deleteMany();
@@ -154,21 +151,10 @@ async function main() {
       // Still running - no endTime
     },
   });
-
-  console.log('✅ Database seeded successfully');
-  console.log('\n📋 Test Users Created:');
-  console.log('Managers:');
-  console.log(`  • manager1@test.com / password123 (Rajesh Gupta)`);
-  console.log(`  • manager2@test.com / password123 (Anita Sharma)`);
-  console.log('\nEmployees:');
-  console.log(`  • employee1@test.com / password123 (Vikram Patel) - managed by manager1`);
-  console.log(`  • employee2@test.com / password123 (Priya Singh) - managed by manager1`);
-  console.log(`  • employee3@test.com / password123 (Arjun Mehta) - managed by manager2`);
 }
 
 main()
   .catch((e) => {
-    console.error('Seed script error:', e);
     process.exit(1);
   })
   .finally(async () => {

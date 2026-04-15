@@ -108,7 +108,7 @@ export const setupWebSocket = (io: SocketIOServer, prisma: PrismaClient) => {
     });
 
     socket.on('error', (error) => {
-      console.error('Socket error:', error);
+      // Handle socket errors silently
     });
   });
 };

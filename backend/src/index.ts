@@ -31,10 +31,6 @@ global.io = io;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
-  next();
-});
 
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date() });
@@ -51,8 +47,6 @@ app.use('/webhooks', webhookRoutes);
 setupWebSocket(io, prisma);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error:', err);
-  
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({ error: 'Invalid token' });
   }
