@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: taskpulse-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-taskpulse}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-taskpulse123}
+      POSTGRES_DB: ${DB_NAME:-taskpulse_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskpulse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taskpulse-backend
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://${DB_USER:-taskpulse}:${DB_PASSWORD:-taskpulse123}@postgres:5432/${DB_NAME:-taskpulse_db}
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_key_change_in_production}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-your_jwt_refresh_secret_key_change_in_production}
+      PORT: 3001
+      WHATSAPP_PROVIDER: ${WHATSAPP_PROVIDER:-msg91}
+      MSG91_AUTH_KEY: ${MSG91_AUTH_KEY}
+      MSG91_ROUTE: ${MSG91_ROUTE:-1}
+      GUPSHUP_API_KEY: ${GUPSHUP_API_KEY}
+      GUPSHUP_APP_NAME: ${GUPSHUP_APP_NAME}
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: sh -c "sleep 5 && npm run prisma:generate && npm run migrate && npm run seed && npm run dev"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: taskpulse-frontend
+    environment:
+      VITE_API_URL: http://localhost:3001
+      VITE_WS_URL: ws://localhost:3001
+    ports:
+      - "3000:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: taskpulse-network

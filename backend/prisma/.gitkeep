@@ -1,0 +1,4 @@
+// This is a Prisma migration file generated automatically
+// It's kept for reference but not used since schema.prisma is the source of truth
+
+prisma/migrations/
