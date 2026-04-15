@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import { CONFIG } from './constants';
 import authRoutes from './routes/auth';
 import taskRoutes from './routes/tasks';
 import userRoutes from './routes/users';
@@ -21,7 +22,7 @@ const app: Express = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: CONFIG.FRONTEND_URL,
     credentials: true,
   },
 });
@@ -66,7 +67,7 @@ app.use((req: Request, res: Response) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = CONFIG.PORT;
 
 const startServer = async () => {
   try {

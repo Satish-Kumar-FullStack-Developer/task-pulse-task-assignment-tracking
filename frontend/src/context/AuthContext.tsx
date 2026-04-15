@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
+import { CONFIG, LOCAL_STORAGE } from '../constants';
 
 
 
@@ -10,10 +11,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const apiUrl = CONFIG.API_URL;
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('token');
+    const savedToken = localStorage.getItem(LOCAL_STORAGE.TOKEN);
     if (savedToken) {
       setToken(savedToken);
       verifyToken(savedToken);
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const { token, user } = response.data;
-      localStorage.setItem('token', token);
+      localStorage.setItem(LOCAL_STORAGE.TOKEN, token);
       setToken(token);
       setUser(user);
     } catch (error: any) {
@@ -53,7 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem(LOCAL_STORAGE.TOKEN);
     setToken(null);
     setUser(null);
   };

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../db';
+import { JWT, USER_ROLES } from '../constants';
 
 const router = Router();
 
@@ -30,14 +31,14 @@ router.post('/login', async (req: Request, res: Response) => {
 
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET || 'your_jwt_secret_key_change_in_production',
-      { expiresIn: '24h' }
+      JWT.SECRET,
+      { expiresIn: JWT.TOKEN_EXPIRY }
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
-      process.env.JWT_REFRESH_SECRET || 'your_jwt_refresh_secret_key_change_in_production',
-      { expiresIn: '7d' }
+      JWT.REFRESH_SECRET,
+      { expiresIn: JWT.REFRESH_TOKEN_EXPIRY }
     );
 
     res.json({
@@ -59,13 +60,13 @@ router.post('/refresh', (req: Request, res: Response) => {
 
     const decoded = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET || 'your_jwt_refresh_secret_key_change_in_production'
+      JWT.REFRESH_SECRET
     ) as any;
 
     const newToken = jwt.sign(
       { userId: decoded.userId },
-      process.env.JWT_SECRET || 'your_jwt_secret_key_change_in_production',
-      { expiresIn: '24h' }
+      JWT.SECRET,
+      { expiresIn: JWT.TOKEN_EXPIRY }
     );
 
     res.json({ token: newToken });

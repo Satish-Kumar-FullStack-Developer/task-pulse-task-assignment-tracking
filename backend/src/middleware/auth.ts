@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import { JWT, USER_ROLES } from '../constants';
 
 const prisma = new PrismaClient();
 
@@ -23,7 +24,7 @@ export const authMiddleware = async (
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'your_jwt_secret_key_change_in_production'
+      JWT.SECRET
     ) as any;
 
     const user = await prisma.user.findUnique({
@@ -43,14 +44,14 @@ export const authMiddleware = async (
 };
 
 export const managerOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user?.role !== 'MANAGER') {
+  if (req.user?.role !== USER_ROLES.MANAGER) {
     return res.status(403).json({ error: 'Only managers can access this resource' });
   }
   next();
 };
 
 export const employeeOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user?.role !== 'EMPLOYEE') {
+  if (req.user?.role !== USER_ROLES.EMPLOYEE) {
     return res.status(403).json({ error: 'Only employees can access this resource' });
   }
   next();

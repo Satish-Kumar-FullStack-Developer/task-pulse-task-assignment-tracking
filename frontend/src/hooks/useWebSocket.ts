@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { CONFIG } from '../constants';
 
 export const useWebSocket = () => {
   const { token } = useAuth();
@@ -10,7 +11,7 @@ export const useWebSocket = () => {
   useEffect(() => {
     if (!token) return;
 
-    const ws = io(import.meta.env.VITE_WS_URL || 'ws://localhost:3001', {
+    const ws = io(CONFIG.WS_URL, {
       auth: { token },
     });
 

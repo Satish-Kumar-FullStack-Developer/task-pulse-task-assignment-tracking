@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { TEST_USERS, USER_ROLES, TASK_STATUS, TASK_PRIORITY } from './constants';
 
 const prisma = new PrismaClient();
 
@@ -15,55 +16,55 @@ async function main() {
   // Create managers
   const manager1 = await prisma.user.create({
     data: {
-      name: 'Rajesh Gupta',
-      email: 'manager1@test.com',
-      passwordHash: await bcrypt.hash('password123', 10),
-      role: 'MANAGER',
-      phone: '+919876543210',
+      name: TEST_USERS.MANAGER_1.name,
+      email: TEST_USERS.MANAGER_1.email,
+      passwordHash: await bcrypt.hash(TEST_USERS.MANAGER_1.password, 10),
+      role: USER_ROLES.MANAGER,
+      phone: TEST_USERS.MANAGER_1.phone,
     },
   });
 
   const manager2 = await prisma.user.create({
     data: {
-      name: 'Anita Sharma',
-      email: 'manager2@test.com',
-      passwordHash: await bcrypt.hash('password123', 10),
-      role: 'MANAGER',
-      phone: '+919876543211',
+      name: TEST_USERS.MANAGER_2.name,
+      email: TEST_USERS.MANAGER_2.email,
+      passwordHash: await bcrypt.hash(TEST_USERS.MANAGER_2.password, 10),
+      role: USER_ROLES.MANAGER,
+      phone: TEST_USERS.MANAGER_2.phone,
     },
   });
 
   // Create employees
   const employee1 = await prisma.user.create({
     data: {
-      name: 'Vikram Patel',
-      email: 'employee1@test.com',
-      passwordHash: await bcrypt.hash('password123', 10),
-      role: 'EMPLOYEE',
+      name: TEST_USERS.EMPLOYEE_1.name,
+      email: TEST_USERS.EMPLOYEE_1.email,
+      passwordHash: await bcrypt.hash(TEST_USERS.EMPLOYEE_1.password, 10),
+      role: USER_ROLES.EMPLOYEE,
       managerId: manager1.id,
-      phone: '+919876543220',
+      phone: TEST_USERS.EMPLOYEE_1.phone,
     },
   });
 
   const employee2 = await prisma.user.create({
     data: {
-      name: 'Priya Singh',
-      email: 'employee2@test.com',
-      passwordHash: await bcrypt.hash('password123', 10),
-      role: 'EMPLOYEE',
+      name: TEST_USERS.EMPLOYEE_2.name,
+      email: TEST_USERS.EMPLOYEE_2.email,
+      passwordHash: await bcrypt.hash(TEST_USERS.EMPLOYEE_2.password, 10),
+      role: USER_ROLES.EMPLOYEE,
       managerId: manager1.id,
-      phone: '+919876543221',
+      phone: TEST_USERS.EMPLOYEE_2.phone,
     },
   });
 
   const employee3 = await prisma.user.create({
     data: {
-      name: 'Arjun Mehta',
-      email: 'employee3@test.com',
-      passwordHash: await bcrypt.hash('password123', 10),
-      role: 'EMPLOYEE',
+      name: TEST_USERS.EMPLOYEE_3.name,
+      email: TEST_USERS.EMPLOYEE_3.email,
+      passwordHash: await bcrypt.hash(TEST_USERS.EMPLOYEE_3.password, 10),
+      role: USER_ROLES.EMPLOYEE,
       managerId: manager2.id,
-      phone: '+919876543222',
+      phone: TEST_USERS.EMPLOYEE_3.phone,
     },
   });
 
@@ -72,11 +73,11 @@ async function main() {
     data: {
       title: 'Client Meeting Notes',
       description: 'Compile and organize notes from today\'s client meetings',
-      status: 'PENDING',
-      priority: 'HIGH',
+      status: TASK_STATUS.PENDING,
+      priority: TASK_PRIORITY.HIGH,
       creatorId: manager1.id,
       assigneeId: employee1.id,
-      dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+      dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -84,8 +85,8 @@ async function main() {
     data: {
       title: 'Project Documentation',
       description: 'Update project documentation with latest features',
-      status: 'PENDING',
-      priority: 'MEDIUM',
+      status: TASK_STATUS.PENDING,
+      priority: TASK_PRIORITY.MEDIUM,
       creatorId: manager1.id,
       assigneeId: employee2.id,
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -96,12 +97,12 @@ async function main() {
     data: {
       title: 'Financial Report',
       description: 'Prepare quarterly financial report',
-      status: 'IN_PROGRESS',
-      priority: 'CRITICAL',
+      status: TASK_STATUS.IN_PROGRESS,
+      priority: TASK_PRIORITY.CRITICAL,
       creatorId: manager2.id,
       assigneeId: employee3.id,
       dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      startedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // Started 2 hours ago
+      startedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
     },
   });
 
