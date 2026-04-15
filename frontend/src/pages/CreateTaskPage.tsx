@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { createTask, getEmployees } from '../utils/api';
 import { Alert, Button, Input, Select, Textarea } from '../components/Form';
 import { ChevronLeft } from 'lucide-react';
+import { TASK_PRIORITY } from '../constants';
 
 export default const CreateTaskPage = () => {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ export default const CreateTaskPage = () => {
   const [description, setDescription] = useState('');
   const [assigneeId, setAssigneeId] = useState('');
   const [dueDate, setDueDate] = useState('');
-  const [priority, setPriority] = useState('MEDIUM');
+  const [priority, setPriority] = useState(TASK_PRIORITY.MEDIUM);
   const [employees, setEmployees] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -127,10 +128,10 @@ export default const CreateTaskPage = () => {
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
             options={[
-              { value: 'LOW', label: 'Low' },
-              { value: 'MEDIUM', label: 'Medium' },
-              { value: 'HIGH', label: 'High' },
-              { value: 'CRITICAL', label: 'Critical' },
+              { value: TASK_PRIORITY.LOW, label: 'Low' },
+              { value: TASK_PRIORITY.MEDIUM, label: 'Medium' },
+              { value: TASK_PRIORITY.HIGH, label: 'High' },
+              { value: TASK_PRIORITY.CRITICAL, label: 'Critical' },
             ]}
           />
 

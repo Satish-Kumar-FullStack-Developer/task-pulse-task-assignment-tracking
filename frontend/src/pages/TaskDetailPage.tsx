@@ -7,6 +7,7 @@ import { formatDate, formatDateTime, formatDuration, getStatusColor, getPriority
 import { Alert, Button, Textarea } from '../components/Form';
 import { ChevronLeft, Clock, MessageCircle } from 'lucide-react';
 import { useTaskUpdates } from '../hooks/useWebSocket';
+import { TASK_STATUS } from '../constants';
 
 export default const TaskDetailPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -176,7 +177,7 @@ export default const TaskDetailPage = () => {
           </div>
 
           {/* Timer Section */}
-          {task.status === 'IN_PROGRESS' && (
+          {task.status === TASK_STATUS.IN_PROGRESS && (
             <div className="card p-6 bg-blue-50 border-blue-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -202,35 +203,35 @@ export default const TaskDetailPage = () => {
           )}
 
           {/* Status Actions */}
-          {isAssignee && task.status === 'PENDING' && (
-            <Button variant="primary" onClick={() => handleStatusChange('IN_PROGRESS')} className="w-full">
+          {isAssignee && task.status === TASK_STATUS.PENDING && (
+            <Button variant="primary" onClick={() => handleStatusChange(TASK_STATUS.IN_PROGRESS)} className="w-full">
               Start Task
             </Button>
           )}
 
-          {isAssignee && task.status === 'IN_PROGRESS' && (
-            <Button variant="primary" onClick={() => handleStatusChange('COMPLETED')} className="w-full">
+          {isAssignee && task.status === TASK_STATUS.IN_PROGRESS && (
+            <Button variant="primary" onClick={() => handleStatusChange(TASK_STATUS.COMPLETED)} className="w-full">
               Mark Complete
             </Button>
           )}
 
-          {isCreator && task.status === 'COMPLETED' && (
+          {isCreator && task.status === TASK_STATUS.COMPLETED && (
             <div className="space-y-4 card p-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Approve or Return?</label>
                 <div className="flex gap-2">
-                  <Button variant="primary" onClick={() => handleStatusChange('APPROVED')} className="flex-1">
+                  <Button variant="primary" onClick={() => handleStatusChange(TASK_STATUS.APPROVED)} className="flex-1">
                     Approve
                   </Button>
                   <Button variant="danger" onClick={async () => {
-                    if (returnReason) await handleStatusChange('RETURNED');
+                    if (returnReason) await handleStatusChange(TASK_STATUS.RETURNED);
                   }} className="flex-1">
                     Return
                   </Button>
                 </div>
               </div>
 
-              {task.status === 'COMPLETED' && (
+              {task.status === TASK_STATUS.COMPLETED && (
                 <Textarea
                   label="Return Reason (if returning)"
                   value={returnReason}

@@ -6,6 +6,7 @@ import { Task } from '../utils/api';
 import { formatDate, getStatusColor, getPriorityColor, isOverdue } from '../utils/formatters';
 import { Alert, Badge, Button } from '../components/Form';
 import { AlertCircle } from 'lucide-react';
+import { USER_ROLES, TASK_STATUS } from '../constants';
 
 export default const TaskListPage = () => {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ export default const TaskListPage = () => {
 
   const filteredTasks = tasks.filter((task) => {
     if (filter === 'overdue') {
-      return isOverdue(task.dueDate) && ['PENDING', 'IN_PROGRESS'].includes(task.status);
+      return isOverdue(task.dueDate) && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status);
     }
     if (filter !== 'all') {
       return task.status === filter;
@@ -48,9 +49,9 @@ export default const TaskListPage = () => {
     <div>
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-3xl font-bold">
-          {user?.role === 'MANAGER' ? 'All Tasks' : 'My Tasks'}
+          {user?.role === USER_ROLES.MANAGER ? 'All Tasks' : 'My Tasks'}
         </h1>
-        {user?.role === 'MANAGER' && (
+        {user?.role === USER_ROLES.MANAGER && (
           <Button variant="primary" onClick={() => navigate('/tasks/new')}>
             New Task
           </Button>
@@ -61,7 +62,7 @@ export default const TaskListPage = () => {
 
       {/* Filters */}
       <div className="mb-6 flex gap-2 flex-wrap">
-        {['all', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'overdue'].map((f) => (
+        {['all', TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS, TASK_STATUS.COMPLETED, 'overdue'].map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -110,7 +111,7 @@ export default const TaskListPage = () => {
                       <p className="text-sm text-gray-600">{task.description?.substring(0, 50)}</p>
                     </div>
                   </td>
-                  {user?.role === 'MANAGER' && (
+                  {user?.role === USER_ROLES.MANAGER && (
                     <td className="px-6 py-4 text-sm">{task.assignee.name}</td>
                   )}
                   <td className="px-6 py-4">

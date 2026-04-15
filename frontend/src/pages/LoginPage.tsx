@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Alert, Button, Input } from '../components/Form';
+import { TEST_CREDENTIALS } from '../constants';
 
 export default const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -13,17 +14,13 @@ export default const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with:', { email, password });
     setError('');
     setLoading(true);
 
     try {
-      console.log('Attempting login...');
       await login(email, password);
-      console.log('Login successful!');
       navigate('/');
     } catch (err: any) {
-      console.error('Login error:', err.message);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -75,9 +72,6 @@ export default const LoginPage = () => {
               transition: 'background-color 0.2s',
               opacity: loading ? 0.5 : 1,
             }}
-            onClick={(e) => {
-              console.log('Button clicked! Event:', e);
-            }}
           >
             {loading ? 'Logging in...' : 'Log In'}
           </button>
@@ -87,8 +81,8 @@ export default const LoginPage = () => {
 
         <div className="text-sm text-gray-600 space-y-2">
           <p className="font-semibold mb-3">Test Credentials:</p>
-          <p><strong>Manager:</strong> manager1@test.com / password123</p>
-          <p><strong>Employee:</strong> employee1@test.com / password123</p>
+          <p><strong>Manager:</strong> {TEST_CREDENTIALS.MANAGER_EMAIL} / {TEST_CREDENTIALS.MANAGER_PASSWORD}</p>
+          <p><strong>Employee:</strong> {TEST_CREDENTIALS.EMPLOYEE_EMAIL} / {TEST_CREDENTIALS.EMPLOYEE_PASSWORD}</p>
         </div>
       </div>
     </div>

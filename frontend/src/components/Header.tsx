@@ -2,6 +2,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import NotificationBell from './NotificationBell';
 import { LogOut, Plus, LayoutDashboard, ListTodo } from 'lucide-react';
+import { USER_ROLES } from '../constants';
 
 export default const Header = () => {
   const { user, logout } = useAuth();
@@ -33,7 +34,7 @@ export default const Header = () => {
             Tasks
           </button>
 
-          {user?.role === 'MANAGER' && (
+          {user?.role === USER_ROLES.MANAGER && (
             <>
               <button
                 onClick={() => navigate('/dashboard')}
