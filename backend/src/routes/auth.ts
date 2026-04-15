@@ -6,6 +6,11 @@ import { JWT, USER_ROLES } from '../constants';
 
 const router = Router();
 
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 
 
 router.post('/login', async (req: Request, res: Response) => {
@@ -46,8 +51,9 @@ router.post('/login', async (req: Request, res: Response) => {
       refreshToken,
       user,
     });
-  } catch (error) {
-    
+  } catch (error: any) {
+    res.status(500).json({ error: error.message || 'Login failed' });
+  }
 });
 
 router.post('/refresh', (req: Request, res: Response) => {
@@ -73,5 +79,6 @@ router.post('/refresh', (req: Request, res: Response) => {
   } catch (error) {
     return res.status(401).json({ error: 'Invalid refresh token' });
   }
+});
 
 export default router;

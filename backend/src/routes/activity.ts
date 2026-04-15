@@ -41,7 +41,8 @@ router.get('/tasks/:taskId', async (req: AuthRequest, res) => {
 
     res.json(enrichedActivities);
   } catch (error: any) {
-    
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Get user activity (for admin/dashboard)
@@ -66,5 +67,6 @@ router.get('/users/:userId', managerOnly, async (req: AuthRequest, res) => {
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
+});
 
 export default router;

@@ -4,6 +4,11 @@ import { TEST_USERS, USER_ROLES, TASK_STATUS, TASK_PRIORITY } from './constants'
 
 const prisma = new PrismaClient();
 
+// Type helpers for Prisma enums
+const castUserRole = (role: string) => role as any;
+const castTaskStatus = (status: string) => status as any;
+const castTaskPriority = (priority: string) => priority as any;
+
 async function main() {
   await prisma.deliveryLog.deleteMany();
   await prisma.activityLog.deleteMany();
@@ -19,7 +24,7 @@ async function main() {
       name: TEST_USERS.MANAGER_1.name,
       email: TEST_USERS.MANAGER_1.email,
       passwordHash: await bcrypt.hash(TEST_USERS.MANAGER_1.password, 10),
-      role: USER_ROLES.MANAGER,
+      role: castUserRole(USER_ROLES.MANAGER),
       phone: TEST_USERS.MANAGER_1.phone,
     },
   });
@@ -29,7 +34,7 @@ async function main() {
       name: TEST_USERS.MANAGER_2.name,
       email: TEST_USERS.MANAGER_2.email,
       passwordHash: await bcrypt.hash(TEST_USERS.MANAGER_2.password, 10),
-      role: USER_ROLES.MANAGER,
+      role: castUserRole(USER_ROLES.MANAGER),
       phone: TEST_USERS.MANAGER_2.phone,
     },
   });
@@ -40,7 +45,7 @@ async function main() {
       name: TEST_USERS.EMPLOYEE_1.name,
       email: TEST_USERS.EMPLOYEE_1.email,
       passwordHash: await bcrypt.hash(TEST_USERS.EMPLOYEE_1.password, 10),
-      role: USER_ROLES.EMPLOYEE,
+      role: castUserRole(USER_ROLES.EMPLOYEE),
       managerId: manager1.id,
       phone: TEST_USERS.EMPLOYEE_1.phone,
     },
@@ -51,7 +56,7 @@ async function main() {
       name: TEST_USERS.EMPLOYEE_2.name,
       email: TEST_USERS.EMPLOYEE_2.email,
       passwordHash: await bcrypt.hash(TEST_USERS.EMPLOYEE_2.password, 10),
-      role: USER_ROLES.EMPLOYEE,
+      role: castUserRole(USER_ROLES.EMPLOYEE),
       managerId: manager1.id,
       phone: TEST_USERS.EMPLOYEE_2.phone,
     },
@@ -62,7 +67,7 @@ async function main() {
       name: TEST_USERS.EMPLOYEE_3.name,
       email: TEST_USERS.EMPLOYEE_3.email,
       passwordHash: await bcrypt.hash(TEST_USERS.EMPLOYEE_3.password, 10),
-      role: USER_ROLES.EMPLOYEE,
+      role: castUserRole(USER_ROLES.EMPLOYEE),
       managerId: manager2.id,
       phone: TEST_USERS.EMPLOYEE_3.phone,
     },
@@ -73,8 +78,8 @@ async function main() {
     data: {
       title: 'Client Meeting Notes',
       description: 'Compile and organize notes from today\'s client meetings',
-      status: TASK_STATUS.PENDING,
-      priority: TASK_PRIORITY.HIGH,
+      status: castTaskStatus(TASK_STATUS.PENDING),
+      priority: castTaskPriority(TASK_PRIORITY.HIGH),
       creatorId: manager1.id,
       assigneeId: employee1.id,
       dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
@@ -85,8 +90,8 @@ async function main() {
     data: {
       title: 'Project Documentation',
       description: 'Update project documentation with latest features',
-      status: TASK_STATUS.PENDING,
-      priority: TASK_PRIORITY.MEDIUM,
+      status: castTaskStatus(TASK_STATUS.PENDING),
+      priority: castTaskPriority(TASK_PRIORITY.MEDIUM),
       creatorId: manager1.id,
       assigneeId: employee2.id,
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -97,8 +102,8 @@ async function main() {
     data: {
       title: 'Financial Report',
       description: 'Prepare quarterly financial report',
-      status: TASK_STATUS.IN_PROGRESS,
-      priority: TASK_PRIORITY.CRITICAL,
+      status: castTaskStatus(TASK_STATUS.IN_PROGRESS),
+      priority: castTaskPriority(TASK_PRIORITY.HIGH),
       creatorId: manager2.id,
       assigneeId: employee3.id,
       dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000),

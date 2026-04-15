@@ -1,4 +1,5 @@
-import axios from 'axios';\nimport { WHATSAPP } from '../constants';
+import axios from 'axios';
+import { WHATSAPP } from '../constants';
 
 export interface WhatsAppMessage {
   phone: string;

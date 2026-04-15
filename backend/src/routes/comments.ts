@@ -110,5 +110,6 @@ router.get('/:taskId', async (req: AuthRequest, res) => {
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
+});
 
 export default router;

@@ -56,5 +56,6 @@ router.get('/employees', async (req: AuthRequest, res) => {
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
+});
 
 export default router;

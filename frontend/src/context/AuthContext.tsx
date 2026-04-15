@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       setUser(response.data);
     } catch (error) {
-      localStorage.removeItem('token');
+      localStorage.removeItem(LOCAL_STORAGE.TOKEN);
       setToken(null);
     } finally {
       setIsLoading(false);
