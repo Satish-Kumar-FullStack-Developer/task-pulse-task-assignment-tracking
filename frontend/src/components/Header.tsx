@@ -4,7 +4,7 @@ import NotificationBell from './NotificationBell';
 import { LogOut, Plus, LayoutDashboard, ListTodo } from 'lucide-react';
 import { USER_ROLES } from '../constants';
 
-export default const Header = () => {
+const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -74,3 +74,5 @@ export default const Header = () => {
     </header>
   );
 }
+
+export default Header;

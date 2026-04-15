@@ -1,10 +1,11 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { DELIVERY_STATUS } from '../constants';
 
 const router = Router();
 const prisma = new PrismaClient();
 
-router.post('/whatsapp/msg91', async (req, res) => {
+router.post('/whatsapp/msg91', async (req: Request, res: Response) => {
   try {
     const { message_id, status, phone } = req.body;
 
@@ -15,7 +16,7 @@ router.post('/whatsapp/msg91', async (req, res) => {
     const updateResult = await prisma.deliveryLog.updateMany({
       where: { externalId: message_id },
       data: {
-        status: status === 'delivered' ? 'DELIVERED' : status === 'read' ? 'READ' : 'FAILED',
+        status: status === 'delivered' ? DELIVERY_STATUS.DELIVERED : status === 'read' ? DELIVERY_STATUS.READ : DELIVERY_STATUS.FAILED,
         updatedAt: new Date(),
       },
     });
@@ -26,7 +27,7 @@ router.post('/whatsapp/msg91', async (req, res) => {
   }
 });
 
-router.post('/whatsapp/gupshup', async (req, res) => {
+router.post('/whatsapp/gupshup', async (req: Request, res: Response) => {
   try {
     const { messageId, status } = req.body;
 
@@ -37,7 +38,7 @@ router.post('/whatsapp/gupshup', async (req, res) => {
     const updateResult = await prisma.deliveryLog.updateMany({
       where: { externalId: messageId },
       data: {
-        status: status === 'delivered' ? 'DELIVERED' : status === 'read' ? 'READ' : 'FAILED',
+        status: status === 'delivered' ? DELIVERY_STATUS.DELIVERED : status === 'read' ? DELIVERY_STATUS.READ : DELIVERY_STATUS.FAILED,
         updatedAt: new Date(),
       },
     });

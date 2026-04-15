@@ -6,7 +6,7 @@ import { Alert, Button, Input, Select, Textarea } from '../components/Form';
 import { ChevronLeft } from 'lucide-react';
 import { TASK_PRIORITY } from '../constants';
 
-export default const CreateTaskPage = () => {
+const CreateTaskPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -148,3 +148,5 @@ export default const CreateTaskPage = () => {
     </div>
   );
 }
+
+export default CreateTaskPage;

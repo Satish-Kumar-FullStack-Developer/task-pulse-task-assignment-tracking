@@ -37,7 +37,7 @@ export class TaskService {
     return task;
   }
 
-  static async getTasksByCreator = (creatorId: string) => {
+  static async getTasksByCreator(creatorId: string) {
     return await prisma.task.findMany({
       where: { creatorId },
       include: {
@@ -51,9 +51,9 @@ export class TaskService {
       },
       orderBy: { createdAt: 'desc' },
     });
-  };
+  }
 
-  static async getTasksByAssignee = (assigneeId: string) => {
+  static async getTasksByAssignee(assigneeId: string) {
     return await prisma.task.findMany({
       where: { assigneeId },
       include: {
@@ -67,9 +67,9 @@ export class TaskService {
       },
       orderBy: { createdAt: 'desc' },
     });
-  };
+  }
 
-  static async getTaskDetail = (taskId: string) => {
+  static async getTaskDetail(taskId: string) {
     return await prisma.task.findUnique({
       where: { id: taskId },
       include: {
@@ -172,7 +172,7 @@ export class TaskService {
     return updatedTask;
   }
 
-  static async getTasksForTeam = (managerId: string) => {
+  static async getTasksForTeam(managerId: string) {
     return await prisma.task.findMany({
       where: { creatorId: managerId },
       include: {
@@ -183,20 +183,20 @@ export class TaskService {
       },
       orderBy: { createdAt: 'desc' },
     });
-  };
+  }
 
-  static async getTaskStats = async (managerId: string) => {
+  static async getTaskStats(managerId: string) {
     const tasks = await prisma.task.findMany({
       where: { creatorId: managerId },
     });
 
     return {
       total: tasks.length,
-      pending: tasks.filter((t) => t.status === TASK_STATUS.PENDING).length,
-      inProgress: tasks.filter((t) => t.status === TASK_STATUS.IN_PROGRESS).length,
-      completed: tasks.filter((t) => t.status === TASK_STATUS.COMPLETED).length,
-      approved: tasks.filter((t) => t.status === TASK_STATUS.APPROVED).length,
-      returned: tasks.filter((t) => t.status === TASK_STATUS.RETURNED).length,
+      pending: tasks.filter((t: any) => t.status === TASK_STATUS.PENDING).length,
+      inProgress: tasks.filter((t: any) => t.status === TASK_STATUS.IN_PROGRESS).length,
+      completed: tasks.filter((t: any) => t.status === TASK_STATUS.COMPLETED).length,
+      approved: tasks.filter((t: any) => t.status === TASK_STATUS.APPROVED).length,
+      returned: tasks.filter((t: any) => t.status === TASK_STATUS.RETURNED).length,
     };
-  };
+  }
 }

@@ -9,7 +9,7 @@ import { ChevronLeft, Clock, MessageCircle } from 'lucide-react';
 import { useTaskUpdates } from '../hooks/useWebSocket';
 import { TASK_STATUS } from '../constants';
 
-export default const TaskDetailPage = () => {
+const TaskDetailPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -316,3 +316,5 @@ export default const TaskDetailPage = () => {
     </div>
   );
 }
+
+export default TaskDetailPage;

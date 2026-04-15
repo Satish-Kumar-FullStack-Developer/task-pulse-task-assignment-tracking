@@ -4,7 +4,7 @@ import { getUnreadCount, markAllAsRead } from '../utils/api';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { Bell, X } from 'lucide-react';
 
-export default const NotificationBell = () => {
+const NotificationBell = () => {
   const { user } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [showPanel, setShowPanel] = useState(false);
@@ -92,3 +92,5 @@ export default const NotificationBell = () => {
     </div>
   );
 }
+
+export default NotificationBell;

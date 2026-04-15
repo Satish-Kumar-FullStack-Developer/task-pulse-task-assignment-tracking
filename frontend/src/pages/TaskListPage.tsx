@@ -8,7 +8,7 @@ import { Alert, Badge, Button } from '../components/Form';
 import { AlertCircle } from 'lucide-react';
 import { USER_ROLES, TASK_STATUS } from '../constants';
 
-export default const TaskListPage = () => {
+const TaskListPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -86,7 +86,7 @@ export default const TaskListPage = () => {
             <thead className="border-b border-gray-200 bg-gray-50">
               <tr>
                 <th className="text-left px-6 py-3 text-sm font-semibold">Title</th>
-                {user?.role === 'MANAGER' && (
+                {user?.role === USER_ROLES.MANAGER && (
                   <th className="text-left px-6 py-3 text-sm font-semibold">Assignee</th>
                 )}
                 <th className="text-left px-6 py-3 text-sm font-semibold">Status</th>
@@ -154,3 +154,5 @@ export default const TaskListPage = () => {
     </div>
   );
 }
+
+export default TaskListPage;

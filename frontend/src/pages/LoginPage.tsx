@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Alert, Button, Input } from '../components/Form';
 import { TEST_CREDENTIALS } from '../constants';
 
-export default const LoginPage = () => {
+const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -88,3 +88,5 @@ export default const LoginPage = () => {
     </div>
   );
 }
+
+export default LoginPage;

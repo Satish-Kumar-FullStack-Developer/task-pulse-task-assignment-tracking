@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { AuthRequest, managerOnly } from '../middleware/auth';
 import { TaskService } from '../services/TaskService';
@@ -9,7 +9,7 @@ import { USER_ROLES, TASK_STATUS, TASK_PRIORITY } from '../constants';
 const router = Router();
 const prisma = new PrismaClient();
 
-router.post('/', managerOnly, async (req: AuthRequest, res) => {
+router.post('/', managerOnly, async (req: AuthRequest, res: Response) => {
   try {
     const { title, description, assigneeId, dueDate, priority } = req.body;
 
@@ -43,7 +43,7 @@ router.post('/', managerOnly, async (req: AuthRequest, res) => {
   }
 });
 
-router.get('/', async (req: AuthRequest, res) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const { role } = req.user;
     const tasks = role === USER_ROLES.MANAGER
@@ -56,7 +56,7 @@ router.get('/', async (req: AuthRequest, res) => {
   }
 });
 
-router.get('/:taskId', async (req: AuthRequest, res) => {
+router.get('/:taskId', async (req: AuthRequest, res: Response) => {
   try {
     const task = await TaskService.getTaskDetail(req.params.taskId);
 
@@ -74,7 +74,7 @@ router.get('/:taskId', async (req: AuthRequest, res) => {
   }
 });
 
-router.patch('/:taskId/status', async (req: AuthRequest, res) => {
+router.patch('/:taskId/status', async (req: AuthRequest, res: Response) => {
   try {
     const { status, returnReason } = req.body;
     const task = await TaskService.getTaskDetail(req.params.taskId);
@@ -112,7 +112,7 @@ router.patch('/:taskId/status', async (req: AuthRequest, res) => {
   }
 });
 
-router.post('/:taskId/timer/start', async (req: AuthRequest, res) => {
+router.post('/:taskId/timer/start', async (req: AuthRequest, res: Response) => {
   try {
     const task = await TaskService.getTaskDetail(req.params.taskId);
 
@@ -140,7 +140,7 @@ router.post('/:taskId/timer/start', async (req: AuthRequest, res) => {
   }
 });
 
-router.post('/:taskId/timer/pause', async (req: AuthRequest, res) => {
+router.post('/:taskId/timer/pause', async (req: AuthRequest, res: Response) => {
   try {
     const { timeLogId } = req.body;
 
@@ -163,7 +163,7 @@ router.post('/:taskId/timer/pause', async (req: AuthRequest, res) => {
   }
 });
 
-router.get('/:taskId/timeLogs', async (req: AuthRequest, res) => {
+router.get('/:taskId/timeLogs', async (req: AuthRequest, res: Response) => {
   try {
     const task = await TaskService.getTaskDetail(req.params.taskId);
 
