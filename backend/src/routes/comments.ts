@@ -7,7 +7,6 @@ import { ActivityLogService } from '../services/ActivityLogService';
 const router = Router();
 const prisma = new PrismaClient();
 
-// Create comment
 router.post('/', async (req: AuthRequest, res) => {
   try {
     const { taskId, content } = req.body;
@@ -28,12 +27,10 @@ router.post('/', async (req: AuthRequest, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    // Check access
     if (task.creatorId !== req.userId && task.assigneeId !== req.userId) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Sanitize comment input
     const sanitizedContent = content
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -54,15 +51,12 @@ router.post('/', async (req: AuthRequest, res) => {
       },
     });
 
-    // Log activity
     await ActivityLogService.log(taskId, req.userId!, 'commented', {
       commentId: comment.id,
     });
 
-    // Notify other party
     await NotificationService.notifyCommentAdded(comment, task);
 
-    // Emit via WebSocket
     if (global.io) {
       global.io.to(taskId).emit('comment:added', comment);
     }
@@ -73,7 +67,6 @@ router.post('/', async (req: AuthRequest, res) => {
   }
 });
 
-// Get task comments
 router.get('/:taskId', async (req: AuthRequest, res) => {
   try {
     const task = await prisma.task.findUnique({
@@ -84,7 +77,6 @@ router.get('/:taskId', async (req: AuthRequest, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    // Check access
     if (task.creatorId !== req.userId && task.assigneeId !== req.userId) {
       return res.status(403).json({ error: 'Access denied' });
     }

@@ -73,10 +73,10 @@ const startServer = async () => {
   try {
     // Test database connection
     await prisma.$queryRaw`SELECT 1`;
-    console.log('✅ Database connected');
+    console.log('Database successfully connected');
 
     httpServer.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`Server running on ${PORT}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

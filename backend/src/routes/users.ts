@@ -6,7 +6,6 @@ import { USER_ROLES } from '../constants';
 const router = Router();
 const prisma = new PrismaClient();
 
-// Get current user
 router.get('/me', async (req: AuthRequest, res) => {
   try {
     const user = await prisma.user.findUnique({
@@ -31,14 +30,12 @@ router.get('/me', async (req: AuthRequest, res) => {
   }
 });
 
-// Get employees (for manager's assignment dropdown)
 router.get('/employees', async (req: AuthRequest, res) => {
   try {
     if (req.user?.role !== USER_ROLES.MANAGER) {
       return res.status(403).json({ error: 'Only managers can view employees' });
     }
 
-    // Get employees managed by this manager
     const employees = await prisma.user.findMany({
       where: {
         role: USER_ROLES.EMPLOYEE,

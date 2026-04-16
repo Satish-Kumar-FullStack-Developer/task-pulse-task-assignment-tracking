@@ -73,7 +73,6 @@ export class TimeLogService {
       if (log.duration) {
         totalTime += log.duration;
       } else if (!log.endTime) {
-        // Still running
         const elapsed = Math.floor(
           (new Date().getTime() - log.startTime.getTime()) / 1000
         );

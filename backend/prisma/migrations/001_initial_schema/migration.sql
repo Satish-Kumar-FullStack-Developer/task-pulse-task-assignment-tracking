@@ -1,7 +1,4 @@
--- CreateInitialSchema
--- CreateTime: 2024-01-15T00:00:00Z
 
--- Create enums
 CREATE TYPE "UserRole" AS ENUM ('MANAGER', 'EMPLOYEE');
 CREATE TYPE "TaskStatus" AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'APPROVED', 'RETURNED');
 CREATE TYPE "TaskPriority" AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL');

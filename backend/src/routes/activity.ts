@@ -6,7 +6,6 @@ import { ActivityLogService } from '../services/ActivityLogService';
 const router = Router();
 const prisma = new PrismaClient();
 
-// Get task activity log
 router.get('/tasks/:taskId', async (req: AuthRequest, res) => {
   try {
     const task = await prisma.task.findUnique({
@@ -23,7 +22,6 @@ router.get('/tasks/:taskId', async (req: AuthRequest, res) => {
 
     const activities = await ActivityLogService.getTaskActivity(req.params.taskId);
 
-    // Enrich with user details
     const enrichedActivities = await Promise.all(
       activities.map(async (activity) => {
         const user = await prisma.user.findUnique({
@@ -45,10 +43,8 @@ router.get('/tasks/:taskId', async (req: AuthRequest, res) => {
   }
 });
 
-// Get user activity (for admin/dashboard)
 router.get('/users/:userId', managerOnly, async (req: AuthRequest, res) => {
   try {
-    // Verify userId is in manager's team or is themselves
     const user = await prisma.user.findUnique({
       where: { id: req.params.userId },
     });

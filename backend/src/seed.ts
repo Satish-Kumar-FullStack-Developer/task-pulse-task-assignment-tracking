@@ -4,7 +4,6 @@ import { TEST_USERS, USER_ROLES, TASK_STATUS, TASK_PRIORITY } from './constants'
 
 const prisma = new PrismaClient();
 
-// Type helpers for Prisma enums
 const castUserRole = (role: string) => role as any;
 const castTaskStatus = (status: string) => status as any;
 const castTaskPriority = (priority: string) => priority as any;
@@ -18,7 +17,6 @@ async function main() {
   await prisma.task.deleteMany();
   await prisma.user.deleteMany();
 
-  // Create managers
   const manager1 = await prisma.user.create({
     data: {
       name: TEST_USERS.MANAGER_1.name,
@@ -39,7 +37,6 @@ async function main() {
     },
   });
 
-  // Create employees
   const employee1 = await prisma.user.create({
     data: {
       name: TEST_USERS.EMPLOYEE_1.name,
@@ -73,7 +70,6 @@ async function main() {
     },
   });
 
-  // Create sample tasks
   const task1 = await prisma.task.create({
     data: {
       title: 'Client Meeting Notes',
@@ -111,7 +107,6 @@ async function main() {
     },
   });
 
-  // Create sample comments
   await prisma.comment.create({
     data: {
       taskId: task1.id,
@@ -128,7 +123,6 @@ async function main() {
     },
   });
 
-  // Create sample time logs
   await prisma.timeLog.create({
     data: {
       taskId: task3.id,
@@ -154,7 +148,6 @@ async function main() {
       taskId: task3.id,
       userId: employee3.id,
       startTime: new Date(Date.now() - 1 * 60 * 60 * 1000),
-      // Still running - no endTime
     },
   });
 }
